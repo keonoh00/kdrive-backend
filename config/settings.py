@@ -30,7 +30,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-CUSTOM_APPS = ["image.apps.ImageConfig"]
+CUSTOM_APPS = ["image.apps.ImageConfig", "users.apps.UsersConfig"]
 
 SYSTEM_APPS = [
     "django.contrib.admin",
@@ -38,7 +38,7 @@ SYSTEM_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
-    "django.contrib.staticfiles"
+    "django.contrib.staticfiles",
 ]
 
 INSTALLED_APPS = CUSTOM_APPS + SYSTEM_APPS
@@ -125,3 +125,6 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Auth
+AUTH_USER_MODEL = "users.User"
