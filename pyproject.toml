@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "cloud-server"
+version = "0.1.0"
+description = ""
+authors = ["keonoh00 <keonoh00@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "cloud_server"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "^4.1.6"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

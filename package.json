@@ -1,0 +1,12 @@
+{
+  "name": "image-classification-cloud",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/keonoh00/image-classification-cloud.git",
+  "author": "keonoh00 <keonoh00@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "poetry run python manage.py runserver",
+    "manage": "poetry run python manage.py"
+  }
+}
