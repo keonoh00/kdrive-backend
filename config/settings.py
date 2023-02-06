@@ -30,7 +30,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-CUSTOM_APPS = ["image.apps.ImageConfig", "users.apps.UsersConfig"]
+CUSTOM_APPS = ["users.apps.UsersConfig"]
 
 SYSTEM_APPS = [
     "django.contrib.admin",
