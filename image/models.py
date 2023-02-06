@@ -9,4 +9,8 @@ class Image(models.Model):
     category = models.CharField(max_length=140)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    # createdBy = models.CharField(max_length=140)
+
+    created_by = models.ForeignKey("users.User", on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
