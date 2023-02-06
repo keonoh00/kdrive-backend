@@ -6,7 +6,7 @@
   "author": "keonoh00 <keonoh00@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start:server": "cd server && poetry run python manage.py runserver",
-    "poetry:manage": "cd server && poetry run python manage.py"
+    "start": "poetry run python manage.py runserver",
+    "manage": "poetry run python manage.py"
   }
 }
