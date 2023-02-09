@@ -11,6 +11,7 @@ packages = [{include = "cloud_server"}]
 python = "^3.11"
 django = "^4.1.6"
 pillow = "^9.4.0"
+djangorestframework = "^3.14.0"
 
 
 [tool.poetry.group.dev.dependencies]

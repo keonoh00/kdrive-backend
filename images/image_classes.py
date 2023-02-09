@@ -105,6 +105,5 @@ class CIFAR100ImageClasses(models.TextChoices):
     WOMAN = ("woman", "Woman")
     WORM = ("worm", "Worm")
 
-
-class ImageNet1KImageClasses(models.TextChoices):
+    # class ImageNet1KImageClasses(models.TextChoices):
     """Image Classes for ImageNet1K Dataset"""
