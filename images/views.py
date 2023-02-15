@@ -1,6 +1,7 @@
+from django.db import transaction
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
-from rest_framework.status import HTTP_204_NO_CONTENT
+from rest_framework.status import HTTP_204_NO_CONTENT, HTTP_405_METHOD_NOT_ALLOWED
 from rest_framework.views import APIView
 from .models import Image
 from .serializers import ImageSerializer
@@ -8,17 +9,21 @@ from .serializers import ImageSerializer
 
 class UploadImage(APIView):
     def post(self, request):
-        serializer = ImageSerializer(data=request.data)
-        if serializer.is_valid():
-            new_image = serializer.save()
-            return Response(
-                {
-                    "ok": True,
-                    "data": {ImageSerializer(new_image).data},
-                },
-            )
-        else:
-            return Response({"ok": False, "error": serializer.errors})
+        with transaction.atomic():
+            if request.user.is_authenticated:
+                serializer = ImageSerializer(data=request.data)
+                if serializer.is_valid():
+                    new_image = serializer.save(owner=request.user)
+                    return Response(
+                        {
+                            "ok": True,
+                            "data": {ImageSerializer(new_image).data},
+                        },
+                    )
+                else:
+                    return Response({"ok": False, "error": serializer.errors})
+            else:
+                return Response(HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class Image(APIView):
@@ -29,8 +34,8 @@ class Image(APIView):
         except:
             raise NotFound
 
-    def get(self, _, pk):
-        serializer = ImageSerializer(self.get_object(pk))
+    def get(self, request, pk):
+        serializer = ImageSerializer(self.get_object(pk), context={"request": request})
         return Response(
             {
                 "ok": True,
@@ -40,6 +45,7 @@ class Image(APIView):
 
     def post(self, request):
         serializer = ImageSerializer(data=request.data)
+
         if serializer.is_valid():
             new_image = serializer.save()
             return Response(

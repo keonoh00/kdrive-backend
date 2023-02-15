@@ -8,7 +8,7 @@ class Image(CommonModel):
     """Image Model Definition"""
 
     image_name = models.CharField(max_length=140, default="")
-    image = models.ImageField()
+    image_url = models.URLField()
     created_by = models.ForeignKey(
         "users.User",
         on_delete=models.CASCADE,

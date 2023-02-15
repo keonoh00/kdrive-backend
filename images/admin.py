@@ -22,15 +22,15 @@ class ImageAdmin(admin.ModelAdmin):
 
     list_display = (
         "image_name",
-        "created_at",
-        "created_by",
         "category",
+        "created_by",
+        "created_at",
     )
 
     list_filter = (
-        "created_at",
-        "created_by",
         "category",
+        "created_by",
+        "created_at",
     )
 
     search_fields = (
@@ -39,6 +39,6 @@ class ImageAdmin(admin.ModelAdmin):
         "=category",
     )
 
-    readonly_fields = ("created_at", "image", "updated_at")
+    readonly_fields = ("created_at", "updated_at")
 
     pass

@@ -1,27 +1,43 @@
 from rest_framework import serializers
 from .image_classes import CIFAR100ImageClasses
 from .models import Image
+from users.serializers import PublicUserSerializer
 
 
 class ImageSerializer(serializers.ModelSerializer):
+    created_by = PublicUserSerializer(read_only=True)
+
+    is_owner = serializers.SerializerMethodField()
+
     class Meta:
         model = Image
-        fields = (
-            "image_name",
-            "image",
-            "category",
-        )
+
+        """
+        If all fields should be editable, use the following code: 
+        "created_at", "updated_at" will be read-only
+        """
+        fields = "__all__"
+
+        """Other option"""
+        # fields = (
+        #     "image_name",
+        #     "image",
+        #     "category",
+        # )
         """ Or we can use exclude instead of fields: """
         # exclude = (
         #     "created_by",
         #     "created_at",
         # )
 
-        """ If all fields should be editable, use the following code: """
-        # fields = "__all__"
+    def get_is_owner(self, obj):
+        request = self.context.get("request")
+        if request.user.is_authenticated:
+            return obj.owner == request.user
+        return False
 
 
-"""Using Serializer"""
+"""Using normal Serializer"""
 
 # class ImageSerializer(serializers.Serializer):
 #     image_name = serializers.CharField(max_length=140)
