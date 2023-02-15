@@ -13,4 +13,5 @@ urlpatterns = [
         "token-login",
         obtain_auth_token,
     ),
+    path("jwt-login", views.JWTLogin.as_view()),
 ]
