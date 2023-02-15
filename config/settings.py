@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 THIRD_PARTY_APPS = [
     "rest_framework",
+    "rest_framework.authtoken",
 ]
 
 CUSTOM_APPS = [
@@ -146,3 +147,11 @@ MEDIA_URL = "user-uploads/"
 
 # Constants
 DEFAULT_PAGINATION_CONTENT_SIZE = 10
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+        "config.authentication.TrustMeBroAuth",
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+}
