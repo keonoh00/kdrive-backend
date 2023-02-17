@@ -39,7 +39,7 @@ class CreateUser(APIView):
             # Saving the password will trigger the hashing algorithm
             new_user.save()
 
-            return Response(new_user.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
