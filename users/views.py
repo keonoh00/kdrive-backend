@@ -7,6 +7,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ParseError
 from .serializers import PrivateUserSerializer
+from users.models import User
 
 
 class Me(APIView):
@@ -78,7 +79,16 @@ class Login(APIView):
             login(request, user)
             return Response({"ok": True})
         else:
-            return Response({"error": "wrong password"})
+            if not User.objects.filter(username=username).exists():
+                return Response(
+                    {"username": "Wrong username"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            else:
+                return Response(
+                    {"password": "Wrong password"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
 
 class Logout(APIView):
