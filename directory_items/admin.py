@@ -8,7 +8,7 @@ class DirectoryItemAdmin(admin.ModelAdmin):
     """DirectoryItem Admin Definition"""
 
     list_display = (
-        "item_name",
+        "name",
         "created_by",
         "created_at",
     )

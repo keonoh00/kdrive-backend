@@ -6,8 +6,8 @@ class DirectoryItem(CommonModel):
 
     """DirectoryItem Model Definition"""
 
-    item_name = models.CharField(max_length=140)
-    source_url = models.URLField(null=True)
+    name = models.CharField(max_length=140)
+    image_url = models.URLField(null=True)
     created_by = models.ForeignKey(
         "users.User",
         on_delete=models.CASCADE,

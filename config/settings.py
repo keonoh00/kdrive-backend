@@ -26,6 +26,12 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY")
+CF_API_TOKEN = env("CF_API_TOKEN")
+CF_ACCOUNT_ID = env("CF_ACCOUNT_ID")
+GPU_SERVER_ADDRESS = env("GPU_SERVER_ADDRESS")
+GPU_SERVER_USERNAME = env("GPU_SERVER_USERNAME")
+GPU_SERVER_PASSWORD = env("GPU_SERVER_PASSWORD")
+GPU_SERVER_PORT = env("GPU_SERVER_PORT")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -148,8 +154,6 @@ AUTH_USER_MODEL = "users.User"
 
 # Image Storage
 MEDIA_ROOT = "uploads"
-
-MEDIA_URL = "user-uploads/"
 
 
 # Constants
