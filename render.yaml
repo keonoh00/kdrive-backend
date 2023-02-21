@@ -1,0 +1,22 @@
+databases:
+  - name: kdrive
+    databaseName: kdrive
+    user: kdrive
+    region: singapore
+
+services:
+  - type: web
+    name: kdrive
+    env: python
+    region: singapore
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn mysite.wsgi:application"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: kdrive
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        value: 4
