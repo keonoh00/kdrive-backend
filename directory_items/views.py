@@ -3,7 +3,7 @@ import paramiko
 from django.db import transaction
 from django.conf import settings
 from rest_framework.response import Response
-from rest_framework.exceptions import NotFound, NotAcceptable
+from rest_framework.exceptions import NotFound
 from rest_framework.status import (
     HTTP_204_NO_CONTENT,
     HTTP_400_BAD_REQUEST,
@@ -12,7 +12,7 @@ from rest_framework.status import (
     HTTP_202_ACCEPTED,
 )
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from .models import DirectoryItem
 from .serializers import DirectoryItemSerializer
 
@@ -60,7 +60,6 @@ class UploadFile(APIView):
     permission_classes = [IsAuthenticated]
 
     def is_folder(self, path):
-
         return path.split("/")[-1] == ""
 
     def post(self, request):
@@ -100,7 +99,7 @@ class UploadFile(APIView):
 
 
 class SingleFile(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_file(self, pk):
         try:
@@ -111,10 +110,7 @@ class SingleFile(APIView):
     def get(self, request, pk):
         file = self.get_file(pk)
         serializer = DirectoryItemSerializer(file)
-        if serializer.is_valid():
-            return Response(serializer.data)
-        else:
-            return Response({"ok": False, "error": serializer.errors})
+        return Response(serializer.data)
 
     def put(self, request, pk):
         file = self.get_file(pk)

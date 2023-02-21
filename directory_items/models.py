@@ -19,4 +19,4 @@ class DirectoryItem(CommonModel):
     path = models.CharField(max_length=1000, default="/")
 
     def __str__(self) -> str:
-        return self.image_name
+        return self.name
