@@ -13,9 +13,6 @@ class DirectoryItem(CommonModel):
         on_delete=models.CASCADE,
         related_name="files",
     )
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-    )
     path = models.CharField(max_length=1000, default="/")
 
     def __str__(self) -> str:
