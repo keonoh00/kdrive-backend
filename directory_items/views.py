@@ -102,6 +102,14 @@ class UploadFile(APIView):
                     classification.terminate()
                     raise Response(status=HTTP_500_INTERNAL_SERVER_ERROR)
 
+                directory = DirectoryItem.objects.filter(
+                    created_by=request.user, name=f"/{result}/"
+                )
+                if not directory:
+                    directory = DirectoryItem.objects.create(
+                        created_by=request.user, name=f"/{result}/"
+                    )
+
                 if serializer.is_valid():
                     new_image = serializer.save(
                         created_by=request.user, path=f"/{result}"
