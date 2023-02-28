@@ -13,6 +13,8 @@ from pathlib import Path
 import os
 import environ
 import dj_database_url
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 env = environ.Env()
 
@@ -33,11 +35,14 @@ GPU_SERVER_ADDRESS = env("GPU_SERVER_ADDRESS")
 GPU_SERVER_USERNAME = env("GPU_SERVER_USERNAME")
 GPU_SERVER_PASSWORD = env("GPU_SERVER_PASSWORD")
 GPU_SERVER_PORT = env("GPU_SERVER_PORT")
+SENTRY_DSN = env("SENTRY_DSN")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = "RENDER" not in os.environ
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "localhost",
+]
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
 
@@ -196,3 +201,11 @@ CORS_ALLOWED_ORIGINS = ["http://127.0.0.1:3000"]
 CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1:3000"]
+
+if not DEBUG:
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[DjangoIntegration()],
+        traces_sample_rate=1.0,
+        send_default_pii=True,
+    )
