@@ -24,5 +24,4 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/v1/users/", include("users.urls")),
     path("api/v1/files/", include("directory_items.urls")),
-    path("api/v1/testing", views.Classification.as_view()),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -10,6 +10,7 @@ from rest_framework.status import (
     HTTP_401_UNAUTHORIZED,
     HTTP_201_CREATED,
     HTTP_202_ACCEPTED,
+    HTTP_500_INTERNAL_SERVER_ERROR,
 )
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
@@ -67,8 +68,16 @@ class UploadFile(APIView):
             if request.user.is_authenticated:
                 name = request.data.get("name")
                 image_url = request.data.get("image_url")
+                image_id = request.data.get("image_id")
+
+                if not name or not image_id or not image_url:
+                    return Response(
+                        {"error": "name, image_url and image_id are required"},
+                        status=HTTP_400_BAD_REQUEST,
+                    )
+
                 is_folder = self.is_folder(name)
-                # TODO: Classification here
+
                 if is_folder and image_url:
                     return Response(
                         {"error": "Folder can't have image_url"},
@@ -80,8 +89,23 @@ class UploadFile(APIView):
                         status=HTTP_400_BAD_REQUEST,
                     )
                 serializer = DirectoryItemSerializer(data=request.data)
+
+                # Classification is done on GPU server
+                try:
+                    classification = ClassificationClass(image_id=image_id)
+                    classification.predict()
+                    result = classification.predict()
+                    classification.terminate()
+                    if not result or result == "None":
+                        raise Response(status=HTTP_500_INTERNAL_SERVER_ERROR)
+                except:
+                    classification.terminate()
+                    raise Response(status=HTTP_500_INTERNAL_SERVER_ERROR)
+
                 if serializer.is_valid():
-                    new_image = serializer.save(created_by=request.user)
+                    new_image = serializer.save(
+                        created_by=request.user, path=f"/{result}"
+                    )
                     return Response(
                         {
                             "ok": True,
@@ -160,21 +184,42 @@ class GetUploadURL(APIView):
         )
 
 
-class Classification(APIView):
-    def get(self, request):
-
-        cli = paramiko.SSHClient()
-        cli.set_missing_host_key_policy(paramiko.AutoAddPolicy)
-        cli.connect(
+class ClassificationClass:
+    def __init__(self, image_id):
+        self.image_id = image_id
+        self.cli = paramiko.SSHClient()
+        self.cli.set_missing_host_key_policy(paramiko.AutoAddPolicy)
+        self.cli.connect(
             settings.GPU_SERVER_ADDRESS,
             username=settings.GPU_SERVER_USERNAME,
             password=settings.GPU_SERVER_PASSWORD,
         )
 
-        _, stdout, _ = cli.exec_command("ls -la")
-        for line in stdout:
-            print(line.strip("\n"))
+        self.temp_dir = "tmp"
+        # Create temporary folder
+        self.cli.exec_command(f"mkdir {self.temp_dir}")
+        # Copy all source codes to temporary folder
+        self.cli.exec_command(f"cp -R kdrive/* {self.temp_dir}")
 
-        cli.close()
+    def _download_image(self):
+        self.cli.exec_command(
+            f"curl https://imagedelivery.net/{settings.CF_ACCOUNT_HASH}/{self.image_id}/public --output {self.temp_dir}/{self.image_id}.png"
+        )
 
-        return Response({"ok": True, "message": "Classification endpoint"})
+    def predict(self):
+        self._download_image()
+        # Run prediction
+        stdin, stdout, stderr = self.cli.exec_command(
+            f"cd {self.temp_dir} && python3 main.py --image {self.image_id}.png"
+        )
+        exit_status = stdout.channel.recv_exit_status()
+        if exit_status == 0:
+            return stdout.read().decode("utf-8").split("\n")[0].split(":")[1].strip()
+        else:
+            return RuntimeError(stderr.read().decode("utf-8"))
+
+    def terminate(self):
+        # remove temp if downloaded
+        self.cli.exec_command(f"rm -rf {self.temp_dir}/{self.image_id}.png")
+        # Close the connection
+        self.cli.close()
