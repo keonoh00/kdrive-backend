@@ -42,8 +42,7 @@ DEBUG = "RENDER" not in os.environ
 
 ALLOWED_HOSTS = [
     "localhost",
-    "kdrive.onrender.com",
-    "127.0.0.1",
+    "backend.kdrive-ai.com",
 ]
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
@@ -202,14 +201,16 @@ if DEBUG:
     CORS_ALLOWED_ORIGINS = ["http://127.0.0.1:3000"]
     CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1:3000"]
 else:
-    CORS_ALLOWED_ORIGINS = ["https://kdrive-frontend.onrender.com"]
-    CSRF_TRUSTED_ORIGINS = ["https://kdrive-frontend.onrender.com"]
+    CORS_ALLOWED_ORIGINS = ["https://kdrive-ai.com"]
+    CSRF_TRUSTED_ORIGINS = ["https://kdrive-ai.com"]
 
 
 CORS_ALLOW_CREDENTIALS = True
 
 
 if not DEBUG:
+    SESSION_COOKIE_DOMAIN = ".kdrive-ai.com"
+    CSRF_COOKIE_DOMAIN = ".kdrive-ai.com"
     sentry_sdk.init(
         dsn=SENTRY_DSN,
         integrations=[DjangoIntegration()],
